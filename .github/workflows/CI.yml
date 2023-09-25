@@ -46,3 +46,22 @@ jobs:
       with:
         gradle-version: 8.2.1
         arguments: build
+
+    - name: Docker build & push
+      run: |
+        docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
+        docker build -t ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }} --platform linux/amd64 .
+        docker push ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+
+          
+    - name: Deploy
+      uses: appleboy/ssh-action@v1.0.0
+      with:
+        host: ${{ secrets.HOST_ADDRESS }}
+        username: ubuntu
+        key: ${{ secrets.KEY }}
+        script: |
+          docker stop trip-comes-true
+          docker rm trip-comes-true
+          docker pull ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
+          docker run -d -p 80:8080 -e TZ=Asia/Seoul --name trip-comes-true ${{ secrets.DOCKER_USERNAME }}/${{ secrets.DOCKER_REPO }}
