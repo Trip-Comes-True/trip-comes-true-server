@@ -31,7 +31,7 @@ jobs:
 
     - name: make application.yml
       run: |
-        cd ./trip-comes-true-server/src/main/resources
+        cd ./src/main/resources/application.yml
         touch ./application.yml
         echo "$(( secrets.YAML_FILE }}" > ./application.yml
       shell: bash
