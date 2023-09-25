@@ -8,8 +8,6 @@
 name: Java CI with Gradle
 
 on:
-  push:
-    branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
 
@@ -28,6 +26,13 @@ jobs:
       with:
         java-version: '11'
         distribution: 'temurin'
+
+    - name: make application-dev.yml
+    - run: |
+        cd src/main/resources
+        touch ./application-dev.yml
+        echo "${{ secrets.YAML_FILE_DEV }}" > ./application-dev.yml
+      shell: bash
 
     - name: init with Gradle
       uses: gradle/gradle-build-action@v2
