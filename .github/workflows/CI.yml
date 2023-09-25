@@ -29,13 +29,6 @@ jobs:
         java-version: '11'
         distribution: 'temurin'
 
-    - name: make application.yml
-      run: |
-        cd ./src/main/resources/application.yml
-        touch ./application.yml
-        echo "$(( secrets.YAML_FILE }}" > ./application.yml
-      shell: bash
-
     - name: init with Gradle
       uses: gradle/gradle-build-action@v2
     - run: gradle init
