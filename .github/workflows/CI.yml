@@ -38,4 +38,3 @@ jobs:
       with:
         gradle-version: 8.2.1
         arguments: build
-        build-root-directory: trip-comes-true-server
