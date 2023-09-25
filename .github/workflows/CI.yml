@@ -31,7 +31,8 @@ jobs:
 
     - name: make application.yml
       run: |
-        cd ./application.yml
+        cd ./tripctserver/src/main/resources
+        touch ./application.yml
         echo "$(( secrets.YAML_FILE }}" > ./application.yml
       shell: bash
 
@@ -44,4 +45,4 @@ jobs:
       with:
         gradle-version: 8.2.1
         arguments: build
-        build-root-directory: tripctsever
+        build-root-directory: tripctserver
