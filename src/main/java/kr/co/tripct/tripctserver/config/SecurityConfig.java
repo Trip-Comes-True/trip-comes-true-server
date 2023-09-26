@@ -1,31 +1,45 @@
 package kr.co.tripct.tripctserver.config;
 
+import kr.co.tripct.tripctserver.config.jwt.JwtAuthenticationFilter;
+import kr.co.tripct.tripctserver.config.jwt.JwtAuthorizationFilter;
+import kr.co.tripct.tripctserver.config.oauth.OAuth2DetailsService;
+import kr.co.tripct.tripctserver.config.oauth.handler.OAuth2LoginSuccessHandler;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
-@EnableWebSecurity
-public class SecurityConfig{
+@RequiredArgsConstructor
+public class SecurityConfig {
 
-    private static final String[] PERMIT_URL_ARRAY = {
-            /* swagger v3 */
-            "/v3/api-docs/**",
-            "/swagger-ui/**"
-    };
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthorizationFilter jwtAuthorizationFilter;
+    private final OAuth2DetailsService oAuth2DetailsService;
+    private final OAuth2LoginSuccessHandler oAuth2LoginSuccessHandler;
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
-        return httpSecurity
-                .httpBasic().disable()  // 인증을 ui로 하는 것이 아닌 토큰 인증 방식을 이용할 것이므로 해체
-                .csrf().disable()
-                .cors().and()
-                .authorizeRequests()
-                .antMatchers(PERMIT_URL_ARRAY).permitAll()
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable();
+        http.authorizeRequests()
+                .antMatchers("/user/**").authenticated()
+                // .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN') or
+                // hasRole('ROLE_USER')")
+                // .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN') and
+                // hasRole('ROLE_USER')")
+                .antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')")
+                .anyRequest().permitAll()
                 .and()
-                .build();
-    }
+                .formLogin()
+                .loginPage("/login")
+                .loginProcessingUrl("/loginProc")
+                .defaultSuccessUrl("/")
+                .and()
+                .oauth2Login()
+                .successHandler(oAuth2LoginSuccessHandler)
+                .userInfoEndpoint().userService(oAuth2DetailsService);
 
+        return http.build();
+    }
 }
