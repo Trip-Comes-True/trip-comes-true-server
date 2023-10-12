@@ -6,8 +6,6 @@ build/
 !**/src/test/**/build/
 !.github/workflows/CI.yml
 
-*.yml
-
 
 ### STS ###
 .apt_generated
