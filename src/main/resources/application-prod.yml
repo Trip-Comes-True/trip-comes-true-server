@@ -1,0 +1,45 @@
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    password: admin1234
+    url: jdbc:mysql://springboot-webservice.ckpiy3twh501.ap-northeast-2.rds.amazonaws.com:3306/tripctdb?useSSL=false&allowPublicKeyRetrieval=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: eunmi
+  jpa:
+    hibernate:
+      ddl-auto: update
+    open-in-view: false
+    database: mysql
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    show-sql: true
+  output:
+    ansi:
+      enabled: always
+  mvc:
+    path match:
+      matching-strategy: ant_path_matcher
+  google:
+    auth:
+      url: 'https://oauth2.googleapis.com'
+      scope: 'profile,email,openid'
+    login:
+      url: 'https://accounts.google.com'
+    redirect:
+      url: 'https://tripcomestrue.site/google/login/redirect'
+    client:
+      id: '969617440750-03gph3ivjcsd7pb5et3bsdm6sfuraroa.apps.googleusercontent.com'
+    secret: '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'
+
+  kakao:
+    auth:
+      url: 'https://kapi.kakao.com/v2/user/me'
+    login:
+      url: 'https://kauth.kakao.com'
+    client:
+      id: 'cf44fc6cf8011ba338bf7a941e9557e5'
+    redirect:
+      url: 'https://tripcomestrue.site/kakao/login/callback'
+
+logging:
+  level:
+    '[kr.co.tripct.tripctserver]': DEBUG
+    '[org.hibernate.type]': TRACE

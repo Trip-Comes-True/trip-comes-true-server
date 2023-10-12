@@ -22,7 +22,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class KaKaoOAuthService implements OAuthService {
+public class  KaKaoOAuthService implements OAuthService {
 
     @Value("${spring.kakao.login.url}")
     private String loginUrl;
