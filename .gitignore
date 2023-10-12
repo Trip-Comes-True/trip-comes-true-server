@@ -5,7 +5,7 @@ build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 !.github/workflows/CI.yml
-
+!**/resources/application-prod.yml
 
 ### STS ###
 .apt_generated

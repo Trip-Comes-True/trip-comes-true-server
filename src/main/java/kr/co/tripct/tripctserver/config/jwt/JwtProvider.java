@@ -8,7 +8,6 @@ import kr.co.tripct.tripctserver.exception.token.TokenNotFoundException;
 import kr.co.tripct.tripctserver.user.domain.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,7 +20,7 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class JwtProvider {
 
-    private final RedisTemplate<Long, String> redisTemplate;
+    //private final RedisTemplate<Long, String> redisTemplate;
 
     @Value("${jwt.secret}")
     private String SECRET;
@@ -41,7 +40,7 @@ public class JwtProvider {
                 .withExpiresAt(new Date(System.currentTimeMillis() + 1000L * 60 * 60 * 24 * 7 )) // 1주일
                 .withClaim("id", id)
                 .sign(Algorithm.HMAC512(SECRET));
-        redisTemplate.opsForValue().set(id, jwtToken, 1000L * 60 * 60 * 24 * 7 * 4, TimeUnit.MILLISECONDS);
+        //redisTemplate.opsForValue().set(id, jwtToken, 1000L * 60 * 60 * 24 * 7 * 4, TimeUnit.MILLISECONDS);
         return JwtProperties.TOKEN_PREFIX + jwtToken;
     }
 
@@ -51,9 +50,9 @@ public class JwtProvider {
         DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512(SECRET)).build().verify(refreshToken);
         Long id = decodedJWT.getClaim("id").asLong();
 
-        if(refreshToken.equals(redisTemplate.opsForValue().get(id))) {
-            return accessTokenCreate(id);
-        }
+//        if(refreshToken.equals(redisTemplate.opsForValue().get(id))) {
+//            return accessTokenCreate(id);
+//        }
         throw new TokenNotFoundException();
     }
 
@@ -62,12 +61,12 @@ public class JwtProvider {
         DecodedJWT decodedJWT = JWT.require(Algorithm.HMAC512(SECRET)).build().verify(refreshToken);
         Long id = decodedJWT.getClaim("id").asLong();
 
-        if(refreshToken.equals(redisTemplate.opsForValue().get(id))) {
-            String token = refreshTokenCreate(id).replace(JwtProperties.TOKEN_PREFIX, "");
-            redisTemplate.delete(id);
-            redisTemplate.opsForValue().set(id, token, 1000L * 60 * 60 * 24 * 7 * 4, TimeUnit.MILLISECONDS);
-            return token;
-        }
+//        if(refreshToken.equals(redisTemplate.opsForValue().get(id))) {
+//            String token = refreshTokenCreate(id).replace(JwtProperties.TOKEN_PREFIX, "");
+//            redisTemplate.delete(id);
+//            redisTemplate.opsForValue().set(id, token, 1000L * 60 * 60 * 24 * 7 * 4, TimeUnit.MILLISECONDS);
+//            return token;
+//        }
         throw new TokenNotFoundException();
     }
 }
