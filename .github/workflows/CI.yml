@@ -33,8 +33,8 @@ jobs:
     - name: make application-dev.yml
       run: |
         cd src/main/resources
-        touch ./application.yml
-        echo "${{ secrets.YAML_FILE_DEV }}" > ./application.yml
+        touch ./application-dev.yml
+        echo "${{ secrets.YAML_FILE_DEV }}" > ./application-dev.yml
       shell: bash
 
     - name: init with Gradle
