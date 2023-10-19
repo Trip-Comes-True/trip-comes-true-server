@@ -9,6 +9,7 @@ import kr.co.tripct.tripctserver.config.oauth.dto.response.GoogleLoginResponse;
 import kr.co.tripct.tripctserver.user.repository.UserRepository;
 import kr.co.tripct.tripctserver.user.service.UserService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class GoogleOAuthService implements OAuthService {
 
     @Value("${spring.google.auth.url}")
@@ -59,6 +61,20 @@ public class GoogleOAuthService implements OAuthService {
         RestTemplate restTemplate = new RestTemplate();
         ObjectMapper objectMapper = new ObjectMapper();
         String requestUrl = UriComponentsBuilder.fromHttpUrl(authUrl + "/tokeninfo").queryParam("id_token", loginResponse.getId_token()).toUriString();
+        log.info("구글 토큰 ID값" + loginResponse.getId_token());
+        String resultJson = restTemplate.getForObject(requestUrl, String.class);
+
+        if(resultJson != null) {
+            GoogleLoginDto userInfoDto = objectMapper.readValue(resultJson, GoogleLoginDto.class);
+            return ResponseEntity.ok(OAuthService.super.getTokenResponse(userInfoDto.getEmail(), userRepository, jwtProvider, userService));
+        }
+        return ResponseEntity.notFound().build();
+    }
+
+    public ResponseEntity<?> login(String accessToken) throws JsonProcessingException {
+        RestTemplate restTemplate = new RestTemplate();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String requestUrl = UriComponentsBuilder.fromHttpUrl(authUrl + "/tokeninfo").queryParam("id_token", accessToken).toUriString();
         String resultJson = restTemplate.getForObject(requestUrl, String.class);
 
         if(resultJson != null) {
