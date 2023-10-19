@@ -4,15 +4,13 @@ import kr.co.tripct.tripctserver.config.jwt.JwtProvider;
 import kr.co.tripct.tripctserver.config.oauth.dto.KaKaoLoginDto;
 import kr.co.tripct.tripctserver.config.oauth.dto.request.KaKaoLoginRequest;
 import kr.co.tripct.tripctserver.config.oauth.dto.response.KaKaoTokenResponse;
+import kr.co.tripct.tripctserver.config.oauth.dto.response.TokenResponse;
 import kr.co.tripct.tripctserver.user.repository.UserRepository;
 import kr.co.tripct.tripctserver.user.service.UserService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -22,7 +20,7 @@ import org.springframework.web.client.RestTemplate;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class  KaKaoOAuthService implements OAuthService {
+public class KaKaoOAuthService implements OAuthService {
 
     @Value("${spring.kakao.login.url}")
     private String loginUrl;
@@ -49,6 +47,7 @@ public class  KaKaoOAuthService implements OAuthService {
                 .grant_type("authorization_code")
                 .build();
         KaKaoTokenResponse kaKaoTokenResponse = getToken(kaKaoLoginRequest);
+        log.info("카카오 토큰 Id 값 : " + kaKaoTokenResponse.getAccess_token());
 
         return createToken(kaKaoTokenResponse);
     }
@@ -93,7 +92,9 @@ public class  KaKaoOAuthService implements OAuthService {
 
         HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
 
-        return restTemplate.postForObject(loginUrl + "/oauth/token", request, KaKaoTokenResponse.class);
+        ResponseEntity<KaKaoTokenResponse> responseEntity = restTemplate.exchange(loginUrl + "/oauth/token", HttpMethod.POST, request, KaKaoTokenResponse.class);
+
+        return responseEntity.getBody();
     }
 
     private String getFieldByName(KaKaoLoginRequest kaKaoLoginRequest, String fieldName) {
@@ -105,9 +106,29 @@ public class  KaKaoOAuthService implements OAuthService {
             case "redirect_uri":
                 return kaKaoLoginRequest.getRedirect_uri();
             case "code":
+                log.info("인가코드임 : " + kaKaoLoginRequest.getCode());
                 return kaKaoLoginRequest.getCode();
             default:
                 return "";
         }
+    }
+
+    public ResponseEntity<TokenResponse> login(String accessToken) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
+        httpHeaders.set("Authorization", "Bearer " + accessToken);
+
+        MultiValueMap<String, String> body = new LinkedMultiValueMap<>();
+        body.add("property_keys", "[\"kakao_account.email\"]");
+
+        HttpEntity<?> request = new HttpEntity<>(body, httpHeaders);
+        KaKaoLoginDto kaKaoLoginDto = restTemplate.postForObject(authUrl, request, KaKaoLoginDto.class);
+
+        if(kaKaoLoginDto != null) {
+            return ResponseEntity.ok(OAuthService.super.getTokenResponse(kaKaoLoginDto.getEmail(), userRepository, jwtProvider, userService));
+        }
+
+        return ResponseEntity.ok(null);
     }
 }
