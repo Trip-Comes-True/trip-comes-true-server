@@ -19,11 +19,4 @@ public class FestivalResponse {
     @JsonProperty("resultMsg")
     private String resultMsg;
 
-    public FestivalResponse() {
-        this.item = item;
-        this.totalCnt = totalCnt;
-        this.resultCode = resultCode;
-        this.errorMsg = errorMsg;
-        this.resultMsg = resultMsg;
-    }
 }

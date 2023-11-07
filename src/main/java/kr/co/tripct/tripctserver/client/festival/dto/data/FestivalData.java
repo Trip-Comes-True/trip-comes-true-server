@@ -26,26 +26,4 @@ public class FestivalData {
     private String reserveUrl;
     private String pubDate;
 
-    public FestivalData() {
-        this.idx = idx;
-        this.title = title;
-        this.link = link;
-        this.category = category;
-        this.sdate = sdate;
-        this.edate = edate;
-        this.place = place;
-        this.placeSido = placeSido;
-        this.placeGugun = placeGugun;
-        this.management = management;
-        this.feeCase = feeCase;
-        this.fee = fee;
-        this.tel = tel;
-        this.homepage = homepage;
-        this.poster = poster;
-        this.posterThumb = posterThumb;
-        this.description = description;
-        this.reserveInfo = reserveInfo;
-        this.reserveUrl = reserveUrl;
-        this.pubDate = pubDate;
-    }
 }

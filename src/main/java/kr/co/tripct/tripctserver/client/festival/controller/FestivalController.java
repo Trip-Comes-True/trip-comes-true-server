@@ -25,8 +25,8 @@ public class FestivalController {
 
     @Operation(summary = "인천 지역 문화 예술 행사")
     @GetMapping("/")
-    public ResponseEntity<FestivalResponse> getFestival(@RequestParam int page, @RequestParam int size) {
-        FestivalResponse data = festivalService.getFestival(page, size);
+    public ResponseEntity<List<FestivalResponse>> getFestival(@RequestParam int page, @RequestParam int size) {
+        List<FestivalResponse> data = festivalService.getFestival(page, size);
         return new ResponseEntity<>(data, HttpStatus.OK);
     }
 

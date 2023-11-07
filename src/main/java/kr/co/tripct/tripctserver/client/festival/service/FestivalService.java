@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class FestivalService {
@@ -15,9 +17,9 @@ public class FestivalService {
     private String apikey;
 
 
-    public FestivalResponse getFestival(int page, int size) {
+    public List<FestivalResponse> getFestival(int page, int size) {
 
-        FestivalResponse festivalDataList = festivalClient.getFestivalInfo(
+        List<FestivalResponse> festivalDataList = festivalClient.getFestivalInfo(
                 apikey,
                 "culture",
                 "json",
