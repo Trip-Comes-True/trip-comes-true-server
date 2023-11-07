@@ -1,6 +1,5 @@
 package kr.co.tripct.tripctserver.client.festival.service;
 
-import kr.co.tripct.tripctserver.client.config.ApiClientConfig;
 import kr.co.tripct.tripctserver.client.festival.dto.response.FestivalResponse;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;

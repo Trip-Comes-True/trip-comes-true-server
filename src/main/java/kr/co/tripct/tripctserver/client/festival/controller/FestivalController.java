@@ -2,7 +2,6 @@ package kr.co.tripct.tripctserver.client.festival.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import kr.co.tripct.tripctserver.client.festival.dto.data.FestivalData;
 import kr.co.tripct.tripctserver.client.festival.dto.response.FestivalResponse;
 import kr.co.tripct.tripctserver.client.festival.service.FestivalService;
 import lombok.RequiredArgsConstructor;
